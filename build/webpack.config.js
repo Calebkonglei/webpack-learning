@@ -2,8 +2,9 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const vueLoaderPlugin = require('vue-loader/lib/plugin');
 const devMode = process.argv.indexOf('--mode=production') === -1;
+process.env.BABEL_ENV = devMode ? 'development' : 'production';
+process.env.NODE_ENV = devMode ? 'development' : 'production';
 
 module.exports = {
     entry: {
@@ -22,23 +23,10 @@ module.exports = {
                 use: {
                     loader: 'babel-loader',
                     options: {
-                        presets: ['@babel/preset-env', , { modules: false }]
+                        presets: [[require.resolve('babel-preset-react-app/dependencies'), { helpers: true }]],
                     }
                 },
                 exclude: /node_modules/
-            },
-            {
-                test: /\.vue$/,
-                use: [{
-                    loader: 'vue-loader',
-                    options: {
-                        compilerOptions: {
-                            preserveWhitespace: false
-                        },
-                        cacheDirectory: true,
-                        cacheCompression: true,
-                    }
-                }]
             },
             {
                 test: /\.css$/,
@@ -57,18 +45,18 @@ module.exports = {
             },
             {
                 test: /\.less$/,
-                use:[{
-                    loader: devMode ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
+                use:[devMode ? 'style-loader' : {
+                    loader: MiniCssExtractPlugin.loader,
                     options: {
                         publicPath: "../dist/css",
-                        hmr: devMode
+                        sourceMap: true
                     }
-                }, 'css-loader', 'less-loader', {
+                }, {
                     loader: 'postcss-loader',
                     options: {
                         plugins: [require('autoprefixer')]
                     }
-                }]
+                }, 'less-loader']
             },
             {
                 test: /\.(jpe?g|png|gif)$/i,
@@ -128,7 +116,6 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: path.resolve(__dirname, '../public/index.html')
         }),
-        new vueLoaderPlugin(),
         new MiniCssExtractPlugin({
             filename: devMode ? '[name].css' : '[name].[hash].css',
             chunkFilename: devMode ? "[id].css" : '[id].[hash].css'
@@ -136,11 +123,11 @@ module.exports = {
     ],
     resolve: {
         alias: {
-            'vue$': 'vue/dist/vue.runtime.esm.js',
+            // 'vue$': 'vue/dist/vue.runtime.esm.js',
             '@': path.resolve(__dirname, '../src'),
-            'assets': resolve('src/assets'),
-            'components': resolve('src/components')
+            'assets': path.resolve(__dirname, 'src/assets'),
+            'components': path.resolve('src/components')
         },
-        extensions: ['*', '.js', '.json', 'vue']
+        extensions: ['*', '.js', '.json', '.less','css']
     },
 }
