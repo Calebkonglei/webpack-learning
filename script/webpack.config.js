@@ -2,14 +2,21 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const paths = require('./paths');
+
 const devMode = process.argv.indexOf('--mode=production') === -1;
 process.env.BABEL_ENV = devMode ? 'development' : 'production';
 process.env.NODE_ENV = devMode ? 'development' : 'production';
 
 module.exports = {
-    entry: {
-        main: path.resolve(__dirname,'../src/index.js')
-    },
+        // main: path.resolve(__dirname,'../src/index.js')
+        // entry: ["@babel/polyfill",path.resolve(__dirname,'../src/index.js')],
+    entry: Object.assign(
+        {
+            _vendor_: [require.resolve('./polyfills')].filter(Boolean).concat(paths.appPackageJson.vendor || [])
+        },
+        paths.entries
+    ),
     output: {
         filename: 'js/[name].[hash:8].js',
         path: path.resolve(__dirname, '../dist'),
@@ -31,7 +38,7 @@ module.exports = {
             {
                 test: /\.css$/,
                 use:[{
-                    loader: devMode ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
+                    loader: devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
                     options: {
                         publicPath: "../dist/css",
                         hmr: devMode
@@ -124,10 +131,11 @@ module.exports = {
     resolve: {
         alias: {
             // 'vue$': 'vue/dist/vue.runtime.esm.js',
-            '@': path.resolve(__dirname, '../src'),
+            'Module': path.resolve(__dirname, '../src'),
             'assets': path.resolve(__dirname, 'src/assets'),
             'components': path.resolve('src/components')
         },
-        extensions: ['*', '.js', '.json', '.less','css']
+        extensions: ['*', '.js', '.json', '.less', '.css', '.ts', '.tsx']
     },
 }
+
