@@ -9,8 +9,6 @@ process.env.BABEL_ENV = devMode ? 'development' : 'production';
 process.env.NODE_ENV = devMode ? 'development' : 'production';
 
 module.exports = {
-        // main: path.resolve(__dirname,'../src/index.js')
-        // entry: ["@babel/polyfill",path.resolve(__dirname,'../src/index.js')],
     entry: Object.assign(
         {
             _vendor_: [require.resolve('./polyfills')].filter(Boolean).concat(paths.appPackageJson.vendor || [])
@@ -34,6 +32,22 @@ module.exports = {
                     }
                 },
                 exclude: /node_modules/
+            },
+            {
+                test: /\.(js|mjs|jsx|ts|tsx)$/,
+                enforce: 'pre',
+                use: [
+                    {
+                        options: {
+                            cache: true,
+                            formatter: require.resolve('react-dev-utils/eslintFormatter'),
+                            eslintPath: require.resolve('eslint'),
+                            resolvePluginsRelativeTo: __dirname
+                        },
+                        loader: require.resolve('eslint-loader')
+                    }
+                ],
+                include: paths.appSrc
             },
             {
                 test: /\.css$/,
@@ -130,7 +144,6 @@ module.exports = {
     ],
     resolve: {
         alias: {
-            // 'vue$': 'vue/dist/vue.runtime.esm.js',
             'Module': path.resolve(__dirname, '../src'),
             'assets': path.resolve(__dirname, 'src/assets'),
             'components': path.resolve('src/components')

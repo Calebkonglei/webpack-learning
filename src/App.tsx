@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
 import './style.less';
 
-class App extends Component<any> {
+
+var a = 123;
+class App extends Component{
     render() {
-        return <div className="main">Hello React!</div>
+        return <div className="main">Hello React</div>
     }
 }
 
