@@ -68,6 +68,7 @@
     "file-loader": "^5.1.0",
     "global": "^4.4.0",
     "html-webpack-plugin": "^3.2.0",
+    "husky": "^4.2.3",
     "less": "^3.11.1",
     "less-loader": "^5.0.0",
     "mini-css-extract-plugin": "^0.9.0",
@@ -89,5 +90,12 @@
   "dependencies": {
     "react": "^16.13.0",
     "react-dom": "^16.13.0"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "node_modules/.bin/commitlint --edit $HUSKY_GIT_PARAMS",
+      "pre-commit": "lint-staged && export StagedFiles=$(git diff --name-only --relative --staged | grep -E '.tsx?$') && if [ -n \"$StagedFiles\" ]; then npm run tsc; fi",
+      "pre-push": "CF=$(git diff --diff-filter AM --name-only @{u}..) || CF=$(git diff --diff-filter AM --name-only origin/master...HEAD); FILES=$(echo \"$CF\" | grep -E '^app/.*\\.m?[jt]sx?$'); if [ -n \"$FILES\" ]; then node_modules/.bin/eslint $FILES --max-warnings 0; fi"
+    }
   }
 }
