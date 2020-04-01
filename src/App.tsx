@@ -1,11 +1,23 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import './style.less';
+import Button from './components/button';
+import Counter from './Module/Counter';
+import CounterWithReducer from './Module/CounterWithReducer';
+// import ColorWithLayout from './Module/ColorWithLayout';
+import InputWithRef from './Module/InputWithRef';
+import Numbers from './Module/Numbers';
 
-
-var a = 123;
-class App extends Component{
+class App extends Component {
     render() {
-        return <div className="main">Hello React</div>
+        return <div className="main">
+            Hello React
+            <Button label="Click me" />
+            <Counter /><br />
+            <CounterWithReducer />
+            {/* <ColorWithLayout /> */}
+            <InputWithRef /><br />
+            <Numbers />
+        </div>
     }
 }
 
